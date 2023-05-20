@@ -1,0 +1,18 @@
+0 Sillas
+1 Tijeras
+2 Vidrios Piso
+3 Ventana
+4 Puntillas
+5 Puerta Cerrada
+6 Persona
+7 Perro
+8 Pared
+9 Mesa
+10 Gato
+11 Escalera
+12 Cuchillo
+13 Cuchilla
+14 Cama
+15 Balon
+16 Armario
+17 Agua Regada
