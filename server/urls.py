@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 import cv2
 import numpy as np
 import keras # o tensorflow.keras
+import base64
 # Definir el modelo y los nombres de las clases
 model = keras.models.load_model("keras_model.h5", compile=False)
 class_names = open("labels.txt", "r").readlines()
@@ -18,13 +19,14 @@ class Protegida(APIView):
     @csrf_exempt
     def post(self, request):
         # Verificar que el método sea POST y que haya un archivo adjunto
-        if request.method == "POST" and request.FILES:
+        if request.method == "POST" and request.data["video"]:
             # Obtener el archivo de video del request
-            video = request.FILES["video"] # obtener los datos binarios del video
+            video = request.data["video"] # obtener los datos binarios del video
+            bytes_data = base64.b64decode(video)
             # Obtener el valor del nombre del archivo
-            nombre = request.POST.get("nombre")
-            with open(nombre, "wb") as f: # Escribir el contenido del video en el archivo local 
-                f.write(video.read())
+            nombre = request.data["nombre"]
+            with open(nombre, "wb") as f: # Escribir el contenido del video en el archivo local
+                f.write(bytes_data)
             cap = cv2.VideoCapture(nombre) # crear un objeto VideoCapture a partir del video
             # Inicializar una lista vacía para almacenar las detecciones
             detecciones = []
@@ -46,7 +48,7 @@ class Protegida(APIView):
                     index = np.argmax(prediction)
                     class_name = class_names[index]
                     confidence_score = prediction[0][index]
-                
+
                     # Agregar la detección a las listas correspondientes
                     detecciones.append((class_name, confidence_score))
                 # Si no, terminar el bucle
